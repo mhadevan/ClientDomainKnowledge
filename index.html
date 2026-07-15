@@ -671,8 +671,40 @@ body{
   </div>
 </div>
 
-<script>
-// ===== QUIZ DATA =====
+  <script>
+
+  //====firebase connect===
+  
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
+
+import {
+  getFirestore,
+  collection,
+  addDoc,
+  serverTimestamp
+} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBFyvdbGYpXRFN7wwha4KN5XV0qHtQx0tA",
+  authDomain: "clientdomainknowledge.firebaseapp.com",
+  projectId: "clientdomainknowledge",
+  storageBucket: "clientdomainknowledge.firebasestorage.app",
+  messagingSenderId: "978785191593",
+  appId: "1:978785191593:web:7264224106c7bc9bd88bb8",
+  measurementId: "G-KK4TJN173B"
+};
+
+const app = initializeApp(firebaseConfig);
+
+const db = getFirestore(app);
+  window.db = db;
+window.collection = collection;
+window.addDoc = addDoc;
+window.serverTimestamp = serverTimestamp;
+
+  
+  // ===== QUIZ DATA =====
 const quizData = [
   // ===== LEVEL 1: CBRE FUNDAMENTALS (9 questions) =====
   {level:1, q:"When was CBRE founded?", hint:"The firm traces its roots to a major American city in the early 1900s.", options:["1895","1906","1923","1948"], correct:1, explanation:"CBRE traces its roots to San Francisco in 1906, making it over 115 years old."},
