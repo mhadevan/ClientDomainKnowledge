@@ -673,37 +673,7 @@ body{
 
   <script>
 
-  //====firebase connect===
-  
-<script type="module">
-import { initializeApp } from "https://www.gstatic.com/firebasejs/12.0.0/firebase-app.js";
 
-import {
-  getFirestore,
-  collection,
-  addDoc,
-  serverTimestamp
-} from "https://www.gstatic.com/firebasejs/12.0.0/firebase-firestore.js";
-
-const firebaseConfig = {
-  apiKey: "AIzaSyBFyvdbGYpXRFN7wwha4KN5XV0qHtQx0tA",
-  authDomain: "clientdomainknowledge.firebaseapp.com",
-  projectId: "clientdomainknowledge",
-  storageBucket: "clientdomainknowledge.firebasestorage.app",
-  messagingSenderId: "978785191593",
-  appId: "1:978785191593:web:7264224106c7bc9bd88bb8",
-  measurementId: "G-KK4TJN173B"
-};
-
-const app = initializeApp(firebaseConfig);
-
-const db = getFirestore(app);
-  window.db = db;
-window.collection = collection;
-window.addDoc = addDoc;
-window.serverTimestamp = serverTimestamp;
-
-  
   // ===== QUIZ DATA =====
 const quizData = [
   // ===== LEVEL 1: CBRE FUNDAMENTALS (9 questions) =====
@@ -1026,6 +996,51 @@ function triggerConfetti(){
 }
 
 // ===== SHOW RESULTS =====
+
+async function saveAttempt(){
+
+const percentage =
+Math.round((state.score/(quizData.length*100))*100);
+
+const highestBadge =
+badges[Math.max(...state.earnedBadges)-1];
+
+try{
+
+await window.addDoc(
+window.collection(window.db,"attempts"),
+{
+
+name:state.playerName,
+
+score:state.score,
+
+percentage:percentage,
+
+correct:state.correctCount,
+
+totalQuestions:quizData.length,
+
+badge:highestBadge.name,
+
+certificateId:
+"CERT-"+Date.now(),
+
+completedAt:
+window.serverTimestamp()
+
+});
+
+console.log("Saved");
+
+}catch(e){
+
+console.error(e);
+
+}
+
+}
+
 function showResults(){
   // Award any remaining badges
   for(let lvl = 1; lvl <= 5; lvl++){
@@ -1075,11 +1090,15 @@ function showResults(){
   breakdown.innerHTML = breakdownHTML;
 
   // Store for certificate
-  state.finalPercentage = percentage;
-  state.highestBadge = highestBadge;
+state.finalPercentage = percentage;
+state.highestBadge = highestBadge;
 
-  showScreen('results');
-  if(percentage >= 60) triggerConfetti();
+saveAttempt();
+
+showScreen('results');
+
+if(percentage >= 60)
+triggerConfetti();
 }
 
 // ===== SHOW CERTIFICATE =====
@@ -1223,5 +1242,6 @@ document.getElementById('playerName').addEventListener('keypress', function(e){
 });
 </script>
 <script defer src="https://static.cloudflareinsights.com/beacon.min.js/v4513226cdae34746b4dedf0b4dfa099e1781791509496" integrity="sha512-ZE9pZaUXND66v380QUtch/5sE9tPFh2zg45pR2PB0CVkCtOREv2AJKkSidISWkysEuQ0EH8faUU5du78bx87UQ==" data-cf-beacon='{"version":"2024.11.0","token":"4edd5f8ec12a48cfa682ab8261b80a79","server_timing":{"name":{"cfCacheStatus":true,"cfEdge":true,"cfExtPri":true,"cfL4":true,"cfOrigin":true,"cfSpeedBrain":true},"location_startswith":null}}' crossorigin="anonymous"></script>
+<script type="module" src="firebase.js"></script>
 </body>
 </html>
